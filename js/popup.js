@@ -26,6 +26,42 @@ async function setPageBackgroundColor() {
   let magic = "";
   const confirmBtn = document.getElementsByName("accept_btn");
 
+  const matchRate = function (strA, strB) {
+    const aLen = strA.length,
+      bLen = strB.length;
+    // console.log(aLen, bLen, subMatchRate(strA, strB));
+
+    let rate = (100 * subMatchRate(strA, strB)) / bLen;
+    return rate;
+    /**
+     *
+     *
+     * @param {string} str
+     * @param {string} subStr
+     * @return {*}
+     */
+    function subMatchRate(str, subStr) {
+      // let maxMatchLen = 0;
+      const strList = str.split("");
+      const subStrList = subStr.split("");
+
+      let matchChars = "";
+
+      for (let i = 0; i < subStr.length; i++) {
+        let matchedIndex = strList.indexOf(subStr[i]);
+        if (matchedIndex > -1) {
+          strList[i] = "*";
+          matchChars += subStr[i];
+        }
+        // maxMatchLen > matchLen ? null : (maxMatchLen = matchLen);
+      }
+      // console.log(str);
+      // console.log(subStr);
+      // console.log(matchChars);
+      return matchChars.length;
+    }
+  };
+
   await chrome.storage.sync.get("lastAns", (res) => {
     magic = res.lastAns
       .replace(
@@ -46,6 +82,7 @@ async function setPageBackgroundColor() {
           ""
         )
         .toUpperCase();
+
       // 过滤默认头像的
       const doubanerProfile = request.querySelector("img").src;
       const normalprofileReg = /^https:\/\/img[0-9].doubanio.com\/icon\/user/;
@@ -53,13 +90,15 @@ async function setPageBackgroundColor() {
       // 过滤可疑昵称的
       const doubanerName = request.querySelector(".fleft a").textContent;
       const matchREG = /^豆友 [A-Za-z0-9]*$/;
-
+      // console.log(matchRate(ans, magic));
+      // console.log(ans, magic, );
       // 筛选暗号正确的
       if (
-        ans == magic &&
+        matchRate(ans, magic) > 85 &&
         !doubanerName.match(matchREG) &&
         !doubanerProfile.match(normalprofileReg)
       ) {
+        request.style.backgroundColor = "#edf4ed";
         const chexkbox = request.querySelector("input");
         chexkbox.checked = true;
         // console.log(doubanerProfile);

@@ -39,3 +39,12 @@ textarea {
   color: #6a6a6a;
   margin: var(--normal-margin);
 }
+
+/* 
+form {
+  margin: var(--normal-margin);
+}
+
+form label {
+  font-size: 12px;
+} */
