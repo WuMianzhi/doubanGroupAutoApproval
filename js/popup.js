@@ -33,6 +33,7 @@ async function setPageBackgroundColor() {
 
     let rate = (100 * subMatchRate(strA, strB)) / bLen;
     return rate;
+
     /**
      *
      *
@@ -60,7 +61,20 @@ async function setPageBackgroundColor() {
       // console.log(matchChars);
       return matchChars.length;
     }
+
+
+
   };
+
+  const jaccardSimilarity = function (str1, str2) {
+    const set1 = new Set(str1.split(''));
+    const set2 = new Set(str2.split(''));
+
+    const intersection = new Set([...set1].filter(c => set2.has(c))).size;
+    const union = set1.size + set2.size - intersection;
+
+    return intersection / union;
+  }
 
   await chrome.storage.sync.get("lastAns", (res) => {
     magic = res.lastAns
@@ -94,13 +108,13 @@ async function setPageBackgroundColor() {
       // console.log(ans, magic, );
       // 筛选暗号正确的
       if (
-        matchRate(ans, magic) > 85 &&
+        jaccardSimilarity(ans, magic) > 85 &&
         !doubanerName.match(matchREG) &&
         !doubanerProfile.match(normalprofileReg)
       ) {
         request.style.backgroundColor = "#edf4ed";
-        const chexkbox = request.querySelector("input");
-        chexkbox.checked = true;
+        const checkbox = request.querySelector("input");
+        checkbox.checked = true;
         // console.log(doubanerProfile);
       }
     }
